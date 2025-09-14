@@ -28,9 +28,9 @@ class CustomLogger(Logger):
     def __init__(
         self,
         name,
-        stream_level: Literal["debug", "info", "warning", "error"],
-        file_level: Literal["debug", "info", "warning", "error"],
-        log_filename: str,
+        stream_level: Literal["debug", "info", "warning", "error"] = "info",
+        file_level: Literal["debug", "info", "warning", "error"] = "info",
+        log_filename: str | None = None,
         fmt_style: Literal["default", "detailed"] = "default",
         max_mb: int = 10,
         backup_count: int = 5,
