@@ -3,11 +3,19 @@ name = "lynkscan"
 description = "Scan licenses and vulnerabilities of open source softwares."
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = ["requests", "langchain", "langchain-community", "langchain-ollama",
-    "sqlmodel"]
+dependencies = [
+    "requests",
+    "langchain",
+    "langchain-community",
+    "langchain-openai",
+    "langchain-ollama",
+    "sqlmodel",
+    "beautifulsoup4",
+]
 dynamic = ["version"]
 
 [project.scripts]
+fetch-licese-info = "lynkscan.cli:run_fetch_license_info"
 
 [build-system]
 requires = ["hatchling", "uv-dynamic-versioning"]
