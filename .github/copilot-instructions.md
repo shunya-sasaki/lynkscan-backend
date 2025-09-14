@@ -17,7 +17,7 @@
 - **Database:**
   - Uses SQLModel (see `db/models/software.py`, `db/manager.py`, `db/repos/software.py`).
   - `DatabaseManager` provides session and repository access.
-  - Models follow the schema in `GEMINI.md` (see mermaid ER diagram).
+  - Models follow the schema in the following instructions. (see mermaid ER diagram).
 - **LLM Integration:**
   - `llm/license_detector.py` uses LangChain and Ollama to classify license text files.
 
@@ -31,13 +31,13 @@
 - **Database setup:**
   - Use `DatabaseManager.create_db_and_tables()` to initialize tables.
 - **Linting/Formatting:**
-  - Uses `black`, `isort`, `ruff` (see `pyproject.toml`).
+  - Uses `ruff` and `pyrefly` (see `pyproject.toml`).
 - **Testing:**
   - No explicit test runner found; add tests under `tests/` if needed.
 
 ## Project Conventions
 
-- **Models:** Use SQLModel for all DB tables. Update `GEMINI.md` ERD if schema changes.
+- **Models:** Use SQLModel for all DB tables. ERD if schema changes.
 - **Repositories:** All DB access via repository classes (e.g., `SoftwareRepository`).
 - **Scanners:** Each ecosystem has its own scanner class. Fetches metadata and vulnerabilities, writes results to JSON files.
 - **LLM:** License detection is abstracted in `LicenseDetector` (configurable model and base_url).
