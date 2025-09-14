@@ -55,7 +55,9 @@
   [optional footer(s)]
   '''
 
-- The type must be one of the following:
+- The first line is the commit title and should be concise (max 50 characters).
+- The third line is optional and can provide additional context or details about the change.
+- The type in the first line must be one of the following:
   - build: Changes that affect the build system or external dependencies
   - ci: Changes to our CI configuration files and scripts
   - docs: Documentation only changes
