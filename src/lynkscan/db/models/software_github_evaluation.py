@@ -1,0 +1,36 @@
+"""SoftwareGitHubEvaluation table models."""
+
+from datetime import datetime
+
+from sqlmodel import Field
+from sqlmodel import SQLModel
+
+
+class SoftwareGitHubEvaluationBase(SQLModel):
+    """Base fields for SoftwareGitHubEvalation."""
+
+    identifier: str = Field(foreign_key="software.identifier")
+    stars: int = 0
+    has_sponsors: bool = False
+    is_authorized_developer: bool = False
+    license_file_path: str | None = None
+    last_checked_time: datetime | None = None
+
+
+class SoftwareGitHubEvaluation(SoftwareGitHubEvaluationBase, table=True):
+    """GitHub repository evaluation metrics for a Software identifier."""
+
+    id: int | None = Field(default=None, primary_key=True)
+
+
+class SoftwareGitHubEvaluationUpdate(SQLModel):
+    """Partial update for SoftwareGitHubEvaluation."""
+
+    identifier: str | None = Field(
+        default=None, foreign_key="software.identifier"
+    )
+    stars: int | None = None
+    has_sponsors: bool | None = None
+    is_authorized_developer: bool | None = None
+    license_file_path: str | None = None
+    last_checked_time: datetime | None = None
