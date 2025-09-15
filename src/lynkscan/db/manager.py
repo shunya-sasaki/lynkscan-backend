@@ -7,7 +7,14 @@ from sqlmodel import SQLModel
 from sqlmodel import create_engine
 from sqlmodel import text
 
+from lynkscan.db.repos import LicenseRepository
+from lynkscan.db.repos import LicenseTypeRepository
+from lynkscan.db.repos import SoftwareCategoryRepository
+from lynkscan.db.repos import SoftwareGitHubEvaluationRepository
 from lynkscan.db.repos import SoftwareRepository
+from lynkscan.db.repos import SoftwareVulnerabilityRepository
+from lynkscan.db.repos import UsageRepository
+from lynkscan.db.repos import VulnerabilityRepository
 
 
 class DatabaseManager:
@@ -34,3 +41,37 @@ class DatabaseManager:
     def software(self, session: Session) -> SoftwareRepository:
         """Get the SoftwareRepository instance."""
         return SoftwareRepository(session)
+
+    def license_type(self, session: Session) -> LicenseTypeRepository:
+        """Get the LicenseTypeRepository instance."""
+        return LicenseTypeRepository(session)
+
+    def license(self, session: Session) -> LicenseRepository:
+        """Get the LicenseRepository instance."""
+        return LicenseRepository(session)
+
+    def software_category(
+        self, session: Session
+    ) -> SoftwareCategoryRepository:
+        """Get the SoftwareCategoryRepository instance."""
+        return SoftwareCategoryRepository(session)
+
+    def vulnerability(self, session: Session) -> VulnerabilityRepository:
+        """Get the VulnerabilityRepository instance."""
+        return VulnerabilityRepository(session)
+
+    def software_vulnerability(
+        self, session: Session
+    ) -> SoftwareVulnerabilityRepository:
+        """Get the SoftwareVulnerabilityRepository instance."""
+        return SoftwareVulnerabilityRepository(session)
+
+    def software_github_evaluation(
+        self, session: Session
+    ) -> SoftwareGitHubEvaluationRepository:
+        """Get the SoftwareGitHubEvaluationRepository instance."""
+        return SoftwareGitHubEvaluationRepository(session)
+
+    def usage(self, session: Session) -> UsageRepository:
+        """Get the UsageRepository instance."""
+        return UsageRepository(session)
