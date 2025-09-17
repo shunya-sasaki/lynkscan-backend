@@ -13,6 +13,8 @@ class SoftwareCategoryBase(SQLModel):
 class SoftwareCategory(SoftwareCategoryBase, table=True):
     """SoftwareCategory table."""
 
+    __tablename__ = "software_category"
+
     id: int | None = Field(default=None, primary_key=True)
 
 

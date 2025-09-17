@@ -14,9 +14,7 @@ from lynkscan.db.models.software_github_evaluation import (
 from lynkscan.db.models.software_github_evaluation import (
     SoftwareGitHubEvaluationUpdate,
 )
-from lynkscan.db.models.software_vulnerability import (
-    SoftwareVulnerability,
-)
+from lynkscan.db.models.software_vulnerability import SoftwareVulnerability
 from lynkscan.db.models.software_vulnerability import (
     SoftwareVulnerabilityUpdate,
 )

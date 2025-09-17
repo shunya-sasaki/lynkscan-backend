@@ -20,6 +20,8 @@ class SoftwareGitHubEvaluationBase(SQLModel):
 class SoftwareGitHubEvaluation(SoftwareGitHubEvaluationBase, table=True):
     """GitHub repository evaluation metrics for a Software identifier."""
 
+    __tablename__ = "software_github_evaluation"
+
     id: int | None = Field(default=None, primary_key=True)
 
 

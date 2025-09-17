@@ -13,6 +13,8 @@ class LicenseTypeBase(SQLModel):
 class LicenseType(LicenseTypeBase, table=True):
     """License type table (e.g., Permissive, Copyleft)."""
 
+    __tablename__ = "license_type"
+
     id: int | None = Field(default=None, primary_key=True)
 
 
