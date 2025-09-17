@@ -8,7 +8,7 @@ class LicenseBase(SQLModel):
     """Base fields for License."""
 
     name: str
-    type_id: int = Field(foreign_key="license_type.id")
+    category_id: int = Field(foreign_key="license_category.id")
 
 
 class License(LicenseBase, table=True):
@@ -21,4 +21,6 @@ class LicenseUpdate(SQLModel):
     """Partial update model for License."""
 
     name: str | None = None
-    type_id: int | None = Field(default=None, foreign_key="license_type.id")
+    category_id: int | None = Field(
+        default=None, foreign_key="license_category.id"
+    )

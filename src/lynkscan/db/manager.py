@@ -7,8 +7,8 @@ from sqlmodel import SQLModel
 from sqlmodel import create_engine
 from sqlmodel import text
 
+from lynkscan.db.repos import LicenseCategoryRepository
 from lynkscan.db.repos import LicenseRepository
-from lynkscan.db.repos import LicenseTypeRepository
 from lynkscan.db.repos import SoftwareCategoryRepository
 from lynkscan.db.repos import SoftwareGitHubEvaluationRepository
 from lynkscan.db.repos import SoftwareRepository
@@ -46,9 +46,9 @@ class DatabaseManager:
         """Get the SoftwareRepository instance."""
         return SoftwareRepository(session)
 
-    def license_type(self, session: Session) -> LicenseTypeRepository:
-        """Get the LicenseTypeRepository instance."""
-        return LicenseTypeRepository(session)
+    def license_category(self, session: Session) -> LicenseCategoryRepository:
+        """Get the LicenseCategoryRepository instance."""
+        return LicenseCategoryRepository(session)
 
     def license(self, session: Session) -> LicenseRepository:
         """Get the LicenseRepository instance."""
