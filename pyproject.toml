@@ -15,7 +15,9 @@ dependencies = [
 dynamic = ["version"]
 
 [project.scripts]
+init-database = "lynkscan.cli:run_init_database"
 fetch-license-info = "lynkscan.cli:run_fetch_license_info"
+register-software-categories = "lynkscan.cli:run_register_software_categories"
 
 [build-system]
 requires = ["hatchling", "uv-dynamic-versioning"]
