@@ -7,7 +7,7 @@ from sqlmodel import SQLModel
 class LicenseCategoryBase(SQLModel):
     """Base fields for LicenseCategory."""
 
-    type: str
+    name: str
 
 
 class LicenseCategory(LicenseCategoryBase, table=True):
@@ -21,4 +21,4 @@ class LicenseCategory(LicenseCategoryBase, table=True):
 class LicenseCategoryUpdate(SQLModel):
     """Partial update model for LicenseCategory."""
 
-    type: str | None = None
+    name: str | None = None
