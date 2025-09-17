@@ -38,6 +38,10 @@ class DatabaseManager:
         with Session(self.engine) as session:
             yield session
 
+    def get_session_instance(self) -> Session:
+        """Get a new database session instance."""
+        return Session(self.engine)
+
     def software(self, session: Session) -> SoftwareRepository:
         """Get the SoftwareRepository instance."""
         return SoftwareRepository(session)
