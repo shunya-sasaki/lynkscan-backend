@@ -52,7 +52,7 @@ class CustomLogger(Logger):
         color_formatter = ColorFormatter(fmt=fmt, datefmt=date_fmt)
         stream_handler = StreamHandler()
         stream_handler.setFormatter(color_formatter)
-        stream_handler.setLevel(stream_level)
+        stream_handler.setLevel(stream_level.upper())
         self.addHandler(stream_handler)
         if log_filename is not None:
             log_filepath = Path(log_filename)
