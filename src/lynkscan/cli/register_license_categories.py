@@ -1,7 +1,6 @@
 """Register license categories from a JSON file."""
 
 import json
-import logging
 from argparse import ArgumentParser
 from pathlib import Path
 

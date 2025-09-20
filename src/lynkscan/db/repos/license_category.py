@@ -15,9 +15,14 @@ class LicenseCategoryRepository:
         """Initialize repository with an active session."""
         self.session = session
 
-    def get(self, id: int) -> LicenseCategory | None:
+    def read(self, id: int) -> LicenseCategory | None:
         """Retrieve a license category by id."""
         statement = select(LicenseCategory).where(LicenseCategory.id == id)
+        return self.session.exec(statement).first()
+
+    def read_by_name(self, name: str) -> LicenseCategory | None:
+        """Retrieve a license category by name."""
+        statement = select(LicenseCategory).where(LicenseCategory.name == name)
         return self.session.exec(statement).first()
 
     def list(self) -> Iterable[LicenseCategory]:
