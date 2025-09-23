@@ -20,6 +20,7 @@ fetch-license-info = "lynkscan.cli:run_fetch_license_info"
 register-software-categories = "lynkscan.cli:run_register_software_categories"
 register-license-categories = "lynkscan.cli:run_register_license_categories"
 register-license = "lynkscan.cli:run_register_license"
+register-github-repo = "lynkscan.cli:run_register_github_repo"
 
 [build-system]
 requires = ["hatchling", "uv-dynamic-versioning"]

@@ -17,11 +17,13 @@ class GitHubRepoVulnerability:
         self,
         ghsa_id: str | None,
         cve_id: str | None,
+        cvss_score: float,
         affected_version_ranges: str,
     ):
         """Initialize GitHubRepoVulnerability."""
         self.ghsa_id = ghsa_id
         self.cve_id = cve_id
+        self.cvss_score = cvss_score
         self.affected_version_ranges = affected_version_ranges
         self.affected_tags: list[str] = []
 
@@ -228,6 +230,7 @@ class GitHubRepo:
         for item in data:
             ghsa_id = item.get("ghsa_id", None)
             cve_id = item.get("cve_id", None)
+            cvss_score = item.get("cvss", {}).get("score", 0.0)
             vulnerabilities = item.get("vulnerabilities", [])
             str_version_ranges: list[str] = []
             for vuln in vulnerabilities:
@@ -236,6 +239,7 @@ class GitHubRepo:
             vulnerability = GitHubRepoVulnerability(
                 ghsa_id=ghsa_id,
                 cve_id=cve_id,
+                cvss_score=cvss_score,
                 affected_version_ranges=str_version_ranges,
             )
             vulns.append(vulnerability)
