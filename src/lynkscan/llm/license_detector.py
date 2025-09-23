@@ -32,13 +32,7 @@ class LicenseDetector:
         self.model = model
         self.base_url = base_url
         self.llm = ChatOllama(model=self.model, base_url=self.base_url)
-
-    def run(self, license_file: str, max_length: int = 1000) -> License:
-        """Run the license detector."""
-        with open(license_file, "r", encoding="utf-8", errors="ignore") as fin:
-            text = fin.read()
-        text = text[:max_length]
-        prompt = ChatPromptTemplate.from_messages(
+        self.prompt = ChatPromptTemplate.from_messages(
             [
                 (
                     "system",
@@ -68,7 +62,21 @@ class LicenseDetector:
                 ("human", "{text}"),
             ]
         )
-        chain = prompt | self.llm.with_structured_output(License)
-        license = chain.invoke({"text": text})
+
+    def run(
+        self,
+        text: str | None,
+        license_file: str | None = None,
+        max_length: int = 1000,
+    ) -> License:
+        """Run the license detector."""
+        if text is None:
+            with open(
+                license_file, "r", encoding="utf-8", errors="ignore"
+            ) as fin:
+                text = fin.read()
+        trimed_text = text[:max_length]
+        chain = self.prompt | self.llm.with_structured_output(License)
+        license = chain.invoke({"text": trimed_text})
         license = License.model_validate(license)
         return license

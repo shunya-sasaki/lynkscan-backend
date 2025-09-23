@@ -27,6 +27,17 @@ class SoftwareRepository:
         software = self.session.exec(statement).first()
         return software
 
+    def read_by_identifier_and_category(
+        self, identifier: str, category_id: int
+    ) -> Software | None:
+        """Read software data by identifier and category_id."""
+        statement = select(Software).where(
+            (Software.identifier == identifier)
+            & (Software.category_id == category_id)
+        )
+        software = self.session.exec(statement).first()
+        return software
+
     def update(self, id: int, new_software: SoftwareUpdate) -> Software | None:
         """Update existing software data."""
         try:

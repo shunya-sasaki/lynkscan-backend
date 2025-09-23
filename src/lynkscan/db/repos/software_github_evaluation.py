@@ -30,6 +30,15 @@ class SoftwareGitHubEvaluationRepository:
         )
         return self.session.exec(statement).first()
 
+    def read_by_identifier(
+        self, identifier: str
+    ) -> SoftwareGitHubEvaluation | None:
+        """Read a SoftwareGitHubEvaluation by software identifier."""
+        statement = select(SoftwareGitHubEvaluation).where(
+            SoftwareGitHubEvaluation.identifier == identifier
+        )
+        return self.session.exec(statement).first()
+
     def update(
         self, id: int, new_item: SoftwareGitHubEvaluationUpdate
     ) -> SoftwareGitHubEvaluation | None:
@@ -61,9 +70,7 @@ class SoftwareGitHubEvaluationRepository:
             if item is not None:
                 self.session.delete(item)
                 self.session.commit()
-                return (
-                    f"Successed to delete software_github_evaluation {id}"
-                )
+                return f"Successed to delete software_github_evaluation {id}"
             else:
                 return f"SoftwareGitHubEvaluation {id} is not found."
         except Exception:

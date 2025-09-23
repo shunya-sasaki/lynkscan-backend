@@ -1,7 +1,9 @@
 """GitHub repo scanner."""
 
+import base64
 import json
 import os
+from typing import Literal
 
 import requests
 from packaging.version import InvalidVersion
@@ -124,10 +126,13 @@ class GitHubRepo:
         self.license: str | None = None
         self.tags: list[str] = []
         self.previous_releases: list[GitHubRelease] = []
+        self.is_verified: bool = False
+        self.has_sponsors: bool = False
         self.homepage: str = ""
         self.repo_url: str = ""
         self.clone_url: str = ""
         self.latest_version: str = ""
+        self.owner_type: Literal["User", "Organization"] = "User"
         self._headers = self._check_auth()
 
     def _check_auth(self) -> dict[str, str]:
@@ -139,12 +144,35 @@ class GitHubRepo:
             headers["X-GitHub-Api-Version"] = "2022-11-28"
         return headers
 
+    def _detect_latest_version(self, tags: list[str]) -> str:
+        """Detect the latest version from the list of tags."""
+        semantic_tags = [tag for tag in tags if self._is_semantic_version(tag)]
+        if not semantic_tags:
+            return "N/A"
+        semantic_tags = sorted(
+            semantic_tags,
+            key=lambda tag: Version(tag.lstrip("v")),
+            reverse=True,
+        )
+        return semantic_tags[0]
+
+    def _is_semantic_version(self, tag: str) -> bool:
+        trimed_tag = tag.lstrip("v")
+        try:
+            Version(trimed_tag)
+            return True
+        except Exception:
+            return False
+
     def fetch_infos(self, with_file: bool = False):
         """Fetch meta info, tags, and vulnerabilities from GitHub API."""
-        self.fetch_selfinfo(with_file=with_file)
+        self.fetch_repoinfo(with_file=with_file)
         releases = self.fetch_releases(with_file=with_file)
         vulnerabilities = self.fetch_vulnerabilities(with_file=with_file)
         release_tags = [release.tag for release in releases]
+        self.latest_version = self._detect_latest_version(release_tags)
+        if self.owner_type == "Organization":
+            self.fetch_owner_verification()
         for vuln in vulnerabilities:
             _ = vuln.evaluate_tags(tags=release_tags)
         for release in releases:
@@ -167,6 +195,7 @@ class GitHubRepo:
         self.homepage = data.get("homepage", "")
         self.repo_url = data.get("html_url", "")
         self.clone_url = data.get("clone_url", "")
+        self.owner_type = data.get("owner", {}).get("type", "User")
 
     def fetch_tags(self, with_file: bool = False) -> list[str]:
         """Fetch repo tags from GitHub API."""
@@ -236,8 +265,30 @@ class GitHubRepo:
         previous_releases = sorted(
             previous_releases, key=self._version_key, reverse=True
         )
-
+        self.previous_releases = previous_releases
         return previous_releases
+
+    def fetch_license_text(self) -> str:
+        """Fetch license file from GitHub API."""
+        response = requests.get(
+            f"https://api.github.com/repos/{self.owner}/{self.repo}/license",
+            headers=self._headers,
+        )
+        data_license = response.json()
+        content = data_license["content"]
+        content_str = base64.b64decode(content).decode("utf-8")
+        return content_str
+
+    def fetch_owner_verification(self) -> bool:
+        """Fetch owner verification status from GitHub API."""
+        response = requests.get(
+            f"https://api.github.com/orgs/{self.owner}",
+            headers=self._headers,
+        )
+        data = response.json()
+        is_verified = data.get("is_verified", False)
+        self.is_verified = is_verified
+        return is_verified
 
     def _version_key(self, release: GitHubRelease):
         tag = release.tag.lstrip("v")

@@ -13,7 +13,6 @@ class SoftwareGitHubEvaluationBase(SQLModel):
     stars: int = 0
     has_sponsors: bool = False
     is_authorized_developer: bool = False
-    license_file_path: str | None = None
     last_checked_time: datetime | None = None
 
 
@@ -34,5 +33,4 @@ class SoftwareGitHubEvaluationUpdate(SQLModel):
     stars: int | None = None
     has_sponsors: bool | None = None
     is_authorized_developer: bool | None = None
-    license_file_path: str | None = None
     last_checked_time: datetime | None = None
