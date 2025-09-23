@@ -15,6 +15,7 @@ from lynkscan.db.repos import SoftwareRepository
 from lynkscan.db.repos import SoftwareVulnerabilityRepository
 from lynkscan.db.repos import UsageRepository
 from lynkscan.db.repos import VulnerabilityRepository
+from lynkscan.db.views import SoftwareView
 
 
 class DatabaseManager:
@@ -79,3 +80,7 @@ class DatabaseManager:
     def usage(self, session: Session) -> UsageRepository:
         """Get the UsageRepository instance."""
         return UsageRepository(session)
+
+    def software_view(self, session: Session) -> list[SoftwareView]:
+        """Get the SoftwareView instance."""
+        return SoftwareView.get_views(session)
