@@ -26,6 +26,11 @@ class LicenseRepository:
         statement = select(License).where(License.id == id)
         return self.session.exec(statement).first()
 
+    def read_by_identifier(self, identifier: str) -> License | None:
+        """Read a License by SPDX identifier."""
+        statement = select(License).where(License.identifier == identifier)
+        return self.session.exec(statement).first()
+
     def update(self, id: int, new_item: LicenseUpdate) -> License | None:
         """Update fields of a License by id."""
         try:

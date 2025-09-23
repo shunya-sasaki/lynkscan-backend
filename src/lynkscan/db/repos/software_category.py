@@ -23,8 +23,13 @@ class SoftwareCategoryRepository:
 
     def read(self, id: int) -> SoftwareCategory | None:
         """Read a SoftwareCategory by id."""
+        statement = select(SoftwareCategory).where(SoftwareCategory.id == id)
+        return self.session.exec(statement).first()
+
+    def read_by_name(self, name: str) -> SoftwareCategory | None:
+        """Read a SoftwareCategory by name."""
         statement = select(SoftwareCategory).where(
-            SoftwareCategory.id == id
+            SoftwareCategory.name == name
         )
         return self.session.exec(statement).first()
 
