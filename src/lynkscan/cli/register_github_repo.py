@@ -90,14 +90,22 @@ def register_software(db_manager: DatabaseManager, repo: GitHubRepo):
 def register_github_evaluation(db_manager: DatabaseManager, repo: GitHubRepo):
     """Register or update GitHub evaluation metrics for a software."""
     session = db_manager.get_session_instance()
+    software_category_repo = db_manager.software_category(session)
+    software_category_obj = software_category_repo.read_by_name(
+        "GitHub Repository"
+    )
+    software_repo = db_manager.software(session)
+    existing_software = software_repo.read_by_identifier_and_category(
+        repo.identifier, software_category_obj.id
+    )
     software_github_eval_repo = db_manager.software_github_evaluation(session)
-    existing_eval = software_github_eval_repo.read_by_identifier(
-        repo.identifier
+    existing_eval = software_github_eval_repo.read_by_software_id(
+        existing_software.id
     )
     if existing_eval is None:
         software_github_evaluation = software_github_eval_repo.create(
             SoftwareGitHubEvaluation(
-                identifier=repo.identifier,
+                software_id=existing_software.id,
                 stars=repo.stars,
                 has_sponsors=repo.has_sponsors,
                 is_authorized_developer=repo.is_verified,
@@ -110,6 +118,7 @@ def register_github_evaluation(db_manager: DatabaseManager, repo: GitHubRepo):
         software_github_evaluation = software_github_eval_repo.update(
             existing_eval.id,
             SoftwareGitHubEvaluationUpdate(
+                software_id=existing_software.id,
                 stars=repo.stars,
                 has_sponsors=repo.has_sponsors,
                 is_authorized_developer=repo.is_verified,
@@ -197,7 +206,9 @@ def run():
     args = parser.parse_args()
     config = AppConfig.from_jsonfile(args.config)
     db_manager = DatabaseManager(config.db_engine_url)
-    repo = GitHubRepo(owner=args.owner, repo=args.repo)
+    repo = GitHubRepo(
+        owner=args.owner, repo=args.repo, verify=config.network.verify_ssl
+    )
     repo.fetch_infos(with_file=True)
     if repo.license == "NOASSERTION":
         license_text = repo.fetch_license_text()

@@ -9,7 +9,7 @@ from sqlmodel import SQLModel
 class SoftwareGitHubEvaluationBase(SQLModel):
     """Base fields for SoftwareGitHubEvalation."""
 
-    identifier: str = Field(foreign_key="software.identifier")
+    software_id: int = Field(foreign_key="software.id")
     stars: int = 0
     has_sponsors: bool = False
     is_authorized_developer: bool = False
@@ -27,9 +27,7 @@ class SoftwareGitHubEvaluation(SoftwareGitHubEvaluationBase, table=True):
 class SoftwareGitHubEvaluationUpdate(SQLModel):
     """Partial update for SoftwareGitHubEvaluation."""
 
-    identifier: str | None = Field(
-        default=None, foreign_key="software.identifier"
-    )
+    software_id: int = Field(foreign_key="software.id")
     stars: int | None = None
     has_sponsors: bool | None = None
     is_authorized_developer: bool | None = None

@@ -30,12 +30,12 @@ class SoftwareGitHubEvaluationRepository:
         )
         return self.session.exec(statement).first()
 
-    def read_by_identifier(
-        self, identifier: str
+    def read_by_software_id(
+        self, software_id: int
     ) -> SoftwareGitHubEvaluation | None:
         """Read a SoftwareGitHubEvaluation by software identifier."""
         statement = select(SoftwareGitHubEvaluation).where(
-            SoftwareGitHubEvaluation.identifier == identifier
+            SoftwareGitHubEvaluation.software_id == software_id
         )
         return self.session.exec(statement).first()
 
