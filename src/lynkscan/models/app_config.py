@@ -9,6 +9,7 @@ from typing import Literal
 from pydantic import BaseModel
 from pydantic import ConfigDict
 
+from lynkscan.models.network_config import NetworkConfig
 from lynkscan.utils import FormatConverter
 
 
@@ -29,6 +30,7 @@ class AppConfig(BaseModel):
     host: str = "localhost"
     port: int = 8000
     db_engine_url: str = "sqlite:///lynkscan.db"
+    network: NetworkConfig = NetworkConfig()
     log_level: Literal["debug", "info", "warning", "error"] = "info"
 
     @classmethod

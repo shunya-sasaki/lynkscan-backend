@@ -117,7 +117,7 @@ class GitHubRelease:
 class GitHubRepo:
     """GitHub repository meta information."""
 
-    def __init__(self, owner: str, repo: str):
+    def __init__(self, owner: str, repo: str, verify: str | None = None):
         """Initialize GitHubRepo."""
         self.owner = owner
         self.repo = repo
@@ -136,6 +136,7 @@ class GitHubRepo:
         self.latest_version: str = ""
         self.owner_type: Literal["User", "Organization"] = "User"
         self._headers = self._check_auth()
+        self._verify: str | None = verify
 
     def _check_auth(self) -> dict[str, str]:
         """Check for GitHub authentication token from environment variable."""
@@ -185,6 +186,7 @@ class GitHubRepo:
         response = requests.get(
             f"https://api.github.com/repos/{self.owner}/{self.repo}",
             headers=self._headers,
+            verify=self._verify,
         )
         data = response.json()
         if with_file:
@@ -204,6 +206,7 @@ class GitHubRepo:
         response = requests.get(
             f"https://api.github.com/repos/{self.owner}/{self.repo}/tags",
             headers=self._headers,
+            verify=self._verify,
         )
         data = response.json()
         if with_file:
@@ -219,6 +222,7 @@ class GitHubRepo:
         response = requests.get(
             f"https://api.github.com/repos/{self.owner}/{self.repo}/security-advisories",
             headers=self._headers,
+            verify=self._verify,
         )
         data = response.json()
         if with_file:
@@ -250,6 +254,7 @@ class GitHubRepo:
         response = requests.get(
             f"https://api.github.com/repos/{self.owner}/{self.repo}/releases",
             headers=self._headers,
+            verify=self._verify,
         )
         releases = response.json()
         if with_file:
@@ -277,6 +282,7 @@ class GitHubRepo:
         response = requests.get(
             f"https://api.github.com/repos/{self.owner}/{self.repo}/license",
             headers=self._headers,
+            verify=self._verify,
         )
         data_license = response.json()
         content = data_license["content"]
@@ -288,6 +294,7 @@ class GitHubRepo:
         response = requests.get(
             f"https://api.github.com/orgs/{self.owner}",
             headers=self._headers,
+            verify=self._verify,
         )
         data = response.json()
         is_verified = data.get("is_verified", False)
