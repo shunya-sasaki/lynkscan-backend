@@ -11,6 +11,9 @@ dependencies = [
     "langchain-ollama",
     "sqlmodel",
     "beautifulsoup4",
+    "pydantic",
+    "pandas",
+    "openpyxl",
 ]
 dynamic = ["version"]
 
