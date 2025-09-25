@@ -117,7 +117,12 @@ class GitHubRelease:
 class GitHubRepo:
     """GitHub repository meta information."""
 
-    def __init__(self, owner: str, repo: str, verify: str | None = None):
+    def __init__(
+        self,
+        owner: str,
+        repo: str,
+        verify: str | None = None,
+    ):
         """Initialize GitHubRepo."""
         self.owner = owner
         self.repo = repo
@@ -151,7 +156,7 @@ class GitHubRepo:
         """Detect the latest version from the list of tags."""
         semantic_tags = [tag for tag in tags if self._is_semantic_version(tag)]
         if not semantic_tags:
-            return "N/A"
+            return tags[0]
         semantic_tags = sorted(
             semantic_tags,
             key=lambda tag: Version(tag.lstrip("v")),
