@@ -13,7 +13,7 @@ class LicenseCategory(str, Enum):
     COPYLEFT: str = "Copyleft"
     WEAK_COPYLEFT: str = "Weak Copyleft"
     PERMISSIVE: str = "Permissive"
-    NON_PERMISSIVE: str = "Non permissive"
+    NON_PERMISSIVE: str = "Non Permissive"
 
 
 class LicenseCategoryResponse(BaseModel):
