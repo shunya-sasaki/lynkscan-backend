@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from sqlalchemy import case
 from sqlalchemy import func
 from sqlmodel import Session
 from sqlmodel import SQLModel
@@ -21,9 +22,15 @@ class SoftwareVulnView(SQLModel, table=False):
     software_version: str
     vuln_cve: str | None
     vuln_cvss: float | None
+    vuln_severity: str | None
 
     @staticmethod
     def selectable():
+        """Return a selectable subquery joining software and vulnerabilities.
+
+        Joins Software -> SoftwareVulnerability -> Vulnerability and exposes
+        software_id, software_version, vuln_cve, vuln_cvss, vuln_severity.
+        """
         stmt = (
             select(
                 Software.id.label("software_id"),
@@ -32,6 +39,7 @@ class SoftwareVulnView(SQLModel, table=False):
                 ),
                 Vulnerability.cve_id.label("vuln_cve"),
                 Vulnerability.cvss.label("vuln_cvss"),
+                Vulnerability.severity.label("vuln_severity"),
             )
             .join(
                 SoftwareVulnerability,
@@ -46,6 +54,16 @@ class SoftwareVulnView(SQLModel, table=False):
 
     @staticmethod
     def get_views(session: Session) -> list[SoftwareVulnView]:
+        """Query and materialize SoftwareVulnView rows.
+
+        Parameters:
+        session : Session
+            Active SQLModel/SQLAlchemy session.
+
+        Returns:
+        list[SoftwareVulnView]
+            Result rows validated into the view model.
+        """
         stmt = (
             select(
                 Software.id.label("software_id"),
@@ -54,6 +72,7 @@ class SoftwareVulnView(SQLModel, table=False):
                 ),
                 Vulnerability.cve_id.label("vuln_cve"),
                 Vulnerability.cvss.label("vuln_cvss"),
+                Vulnerability.severity.label("vuln_severity"),
             )
             .join(
                 SoftwareVulnerability,
@@ -76,13 +95,38 @@ class SoftwareView(SQLModel, table=False):
     identifier: str
     latest_version: str | None
     license: str | None
+    severity: str | None
     max_cvss: float | None
     official_site_url: str
     repo_url: str
 
     @staticmethod
     def get_views(session: Session) -> list[SoftwareView]:
+        """Return the software view rows with severity for latest versions.
+
+        The severity is the highest severity among vulnerabilities that affect
+        the software's latest_version. If there are no vulnerabilities, the
+        severity is "none". Also returns the max CVSS for the latest version.
+        """
         vuln_sq = SoftwareVulnView.selectable()
+
+        severity_rank = func.max(
+            case(
+                (vuln_sq.c.vuln_severity == "critical", 5),
+                (vuln_sq.c.vuln_severity == "high", 4),
+                (vuln_sq.c.vuln_severity == "medium", 3),
+                (vuln_sq.c.vuln_severity == "low", 2),
+                else_=0,
+            )
+        )
+
+        severity_expr = case(
+            (severity_rank == 5, "critical"),
+            (severity_rank == 4, "high"),
+            (severity_rank == 3, "medium"),
+            (severity_rank == 2, "low"),
+            else_="none",
+        ).label("severity")
 
         stmt = (
             select(
@@ -93,6 +137,7 @@ class SoftwareView(SQLModel, table=False):
                 License.name.label("license"),
                 Software.official_site_url.label("official_site_url"),
                 Software.repo_url.label("repo_url"),
+                severity_expr,
                 func.max(vuln_sq.c.vuln_cvss).label("max_cvss"),  # ← 集計
             )
             .join(
