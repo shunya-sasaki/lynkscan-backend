@@ -137,7 +137,6 @@ def register_vulnerabilities(
     for release in repo.previous_releases:
         if release.tag in exclude_tags:
             continue
-        logger.info(f"Release: {release.tag}")
         for vuln in release.vulnerabilities:
             if vuln.cve_id is not None:
                 existing_vuln = vuln_repo.read_by_cve_id(vuln.cve_id)
@@ -153,6 +152,7 @@ def register_vulnerabilities(
                         cve_id=vuln.cve_id,
                         ghsa_id=vuln.ghsa_id,
                         cvss=vuln.cvss_score,
+                        severity=vuln.severity.value,
                     )
                 )
                 vuln_id = vulnerability.id

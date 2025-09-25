@@ -5,6 +5,7 @@ from lynkscan.models.license_category import LicenseCategory
 from lynkscan.models.license_info import LicenseInfo
 from lynkscan.models.llm_config import LlmConfig
 from lynkscan.models.network_config import NetworkConfig
+from lynkscan.models.severity import VulnerabilitySeverity
 
 __all__ = [
     "LicenseCategory",
@@ -12,4 +13,5 @@ __all__ = [
     "AppConfig",
     "NetworkConfig",
     "LlmConfig",
+    "VulnerabilitySeverity",
 ]

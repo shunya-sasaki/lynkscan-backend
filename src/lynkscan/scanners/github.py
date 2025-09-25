@@ -9,6 +9,8 @@ import requests
 from packaging.version import InvalidVersion
 from packaging.version import Version
 
+from lynkscan.models import VulnerabilitySeverity
+
 
 class GitHubRepoVulnerability:
     """GitHub repository vulnerability information."""
@@ -18,12 +20,14 @@ class GitHubRepoVulnerability:
         ghsa_id: str | None,
         cve_id: str | None,
         cvss_score: float,
+        severity: VulnerabilitySeverity,
         affected_version_ranges: str,
     ):
         """Initialize GitHubRepoVulnerability."""
         self.ghsa_id = ghsa_id
         self.cve_id = cve_id
         self.cvss_score = cvss_score
+        self.severity = severity
         self.affected_version_ranges = affected_version_ranges
         self.affected_tags: list[str] = []
 
@@ -240,6 +244,12 @@ class GitHubRepo:
             ghsa_id = item.get("ghsa_id", None)
             cve_id = item.get("cve_id", None)
             cvss_score = item.get("cvss", {}).get("score", 0.0)
+            if cvss_score is not None:
+                severity = self._detect_severity(cvss_score)
+            elif severity := item.get("severity", None):
+                severity = VulnerabilitySeverity(severity)
+            else:
+                severity = VulnerabilitySeverity.NONE
             vulnerabilities = item.get("vulnerabilities", [])
             str_version_ranges: list[str] = []
             for vuln in vulnerabilities:
@@ -249,10 +259,26 @@ class GitHubRepo:
                 ghsa_id=ghsa_id,
                 cve_id=cve_id,
                 cvss_score=cvss_score,
+                severity=severity,
                 affected_version_ranges=str_version_ranges,
             )
             vulns.append(vulnerability)
         return vulns
+
+    def _detect_severity(self, cvss_score: float) -> VulnerabilitySeverity:
+        """Detect severity level from CVSS score."""
+        if cvss_score == 0.0:
+            return VulnerabilitySeverity.NONE
+        elif 0.1 <= cvss_score <= 3.9:
+            return VulnerabilitySeverity.LOW
+        elif 4.0 <= cvss_score <= 6.9:
+            return VulnerabilitySeverity.MEDIUM
+        elif 7.0 <= cvss_score <= 8.9:
+            return VulnerabilitySeverity.HIGH
+        elif 9.0 <= cvss_score <= 10.0:
+            return VulnerabilitySeverity.CRITICAL
+        else:
+            return VulnerabilitySeverity.NONE
 
     def fetch_releases(self, with_file: bool = False) -> list[GitHubRelease]:
         """Fetch repo releases from GitHub API."""

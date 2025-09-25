@@ -1,9 +1,8 @@
 """Views for the database."""
-# views/software.py
 
 from __future__ import annotations
 
-from sqlalchemy import func  # ← 追加
+from sqlalchemy import func
 from sqlmodel import Session
 from sqlmodel import SQLModel
 from sqlmodel import select
@@ -104,9 +103,8 @@ class SoftwareView(SQLModel, table=False):
                 vuln_sq,
                 (Software.id == vuln_sq.c.software_id)
                 & (vuln_sq.c.software_version == Software.latest_version),
-                isouter=True,  # ← 脆弱性が無いソフトも含める
+                isouter=True,
             )
-            # 非集計列をGROUP BY
             .group_by(
                 Software.name,
                 SoftwareCategory.name,

@@ -2,6 +2,7 @@
 
 from typing import Generator
 
+import pandas as pd
 from sqlmodel import Session
 from sqlmodel import SQLModel
 from sqlmodel import create_engine
@@ -16,6 +17,7 @@ from lynkscan.db.repos import SoftwareVulnerabilityRepository
 from lynkscan.db.repos import UsageRepository
 from lynkscan.db.repos import VulnerabilityRepository
 from lynkscan.db.views import SoftwareView
+from lynkscan.db.views import VulnView
 
 
 class DatabaseManager:
@@ -42,6 +44,13 @@ class DatabaseManager:
     def get_session_instance(self) -> Session:
         """Get a new database session instance."""
         return Session(self.engine)
+
+    def view_to_excel(
+        self, view: list[SQLModel], file_path: str, sheet_name: str
+    ):
+        """Export a view to an Excel file."""
+        df = pd.DataFrame([item.model_dump() for item in view])
+        df.to_excel(file_path, index=False, sheet_name=sheet_name)
 
     def software(self, session: Session) -> SoftwareRepository:
         """Get the SoftwareRepository instance."""
@@ -84,3 +93,7 @@ class DatabaseManager:
     def software_view(self, session: Session) -> list[SoftwareView]:
         """Get the SoftwareView instance."""
         return SoftwareView.get_views(session)
+
+    def vuln_view(self, session: Session) -> list[VulnView]:
+        """Get the VulnView instance."""
+        return VulnView.get_views(session)
