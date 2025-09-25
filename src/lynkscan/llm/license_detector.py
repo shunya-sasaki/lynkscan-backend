@@ -1,5 +1,7 @@
 """License checker with LLM."""
 
+import os
+
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_ollama import ChatOllama
 from pydantic import BaseModel
@@ -25,12 +27,11 @@ class LicenseDetector:
 
     def __init__(
         self,
-        model: str = "gemma3:270m",
-        base_url: str = "http://localhost:11434",
+        model: str = "gemma3:latest",
     ):
         """Initialize the LicenseDetector."""
         self.model = model
-        self.base_url = base_url
+        self.base_url = self._detect_base_url()
         self.llm = ChatOllama(model=self.model, base_url=self.base_url)
         self.prompt = ChatPromptTemplate.from_messages(
             [
@@ -62,6 +63,15 @@ class LicenseDetector:
                 ("human", "{text}"),
             ]
         )
+
+    def _detect_base_url(self, base_url: str | None = None) -> str:
+        """Detect the base URL for Ollama API."""
+        if base_url is not None:
+            return base_url
+        env_base_url = os.getenv("OLLAMA_HOST")
+        if env_base_url is not None:
+            return env_base_url
+        return "http://localhost:11434"
 
     def run(
         self,

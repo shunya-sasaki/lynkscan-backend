@@ -212,7 +212,7 @@ def run():
     repo.fetch_infos(with_file=True)
     if repo.license == "NOASSERTION":
         license_text = repo.fetch_license_text()
-        detector = LicenseDetector()
+        detector = LicenseDetector(model=config.llm.detector_model)
         license = detector.run(license_text)
         repo.license = license.identifier
     register_software(db_manager, repo)
