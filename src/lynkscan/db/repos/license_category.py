@@ -2,6 +2,7 @@
 
 from typing import Iterable
 
+from sqlalchemy import Sequence
 from sqlmodel import Session
 from sqlmodel import select
 
@@ -15,10 +16,16 @@ class LicenseCategoryRepository:
         """Initialize repository with an active session."""
         self.session = session
 
-    def read(self, id: int) -> LicenseCategory | None:
+    def read(
+        self, id: int | None
+    ) -> LicenseCategory | Sequence[LicenseCategory] | None:
         """Retrieve a license category by id."""
-        statement = select(LicenseCategory).where(LicenseCategory.id == id)
-        return self.session.exec(statement).first()
+        if id is None:
+            statement = select(LicenseCategory)
+            return self.session.exec(statement).all()
+        else:
+            statement = select(LicenseCategory).where(LicenseCategory.id == id)
+            return self.session.exec(statement).first()
 
     def read_by_name(self, name: str) -> LicenseCategory | None:
         """Retrieve a license category by name."""
