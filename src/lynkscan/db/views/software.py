@@ -11,6 +11,7 @@ from sqlmodel import select
 from lynkscan.db.models import License
 from lynkscan.db.models import Software
 from lynkscan.db.models import SoftwareCategory
+from lynkscan.db.models import SoftwareGitHubEvaluation
 from lynkscan.db.models import SoftwareVulnerability
 from lynkscan.db.models import Vulnerability
 
@@ -97,6 +98,9 @@ class SoftwareView(SQLModel, table=False):
     license: str | None
     severity: str | None
     max_cvss: float | None
+    stars: int | None
+    is_developer_authorized: bool | None
+    has_sponsors: bool | None
     official_site_url: str
     repo_url: str
 
@@ -135,6 +139,11 @@ class SoftwareView(SQLModel, table=False):
                 Software.identifier.label("identifier"),
                 Software.latest_version.label("latest_version"),
                 License.name.label("license"),
+                SoftwareGitHubEvaluation.stars.label("stars"),
+                SoftwareGitHubEvaluation.is_authorized_developer.label(
+                    "is_developer_authorized"
+                ),
+                SoftwareGitHubEvaluation.has_sponsors.label("has_sponsors"),
                 Software.official_site_url.label("official_site_url"),
                 Software.repo_url.label("repo_url"),
                 severity_expr,
@@ -144,6 +153,11 @@ class SoftwareView(SQLModel, table=False):
                 SoftwareCategory, Software.category_id == SoftwareCategory.id
             )
             .join(License, Software.license_id == License.id)
+            .join(
+                SoftwareGitHubEvaluation,
+                Software.id == SoftwareGitHubEvaluation.software_id,
+                isouter=True,
+            )
             .join(
                 vuln_sq,
                 (Software.id == vuln_sq.c.software_id)
