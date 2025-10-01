@@ -14,10 +14,12 @@ dependencies = [
     "pydantic",
     "pandas",
     "openpyxl",
+    "prompt_toolkit",
 ]
 dynamic = ["version"]
 
 [project.scripts]
+lynkscan = "lynkscan.cli:run_interactive_mode"
 init-database = "lynkscan.cli:run_init_database"
 fetch-license-info = "lynkscan.cli:run_fetch_license_info"
 register-software-categories = "lynkscan.cli:run_register_software_categories"

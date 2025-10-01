@@ -2,6 +2,7 @@
 
 from lynkscan.cli.fetch_license_info import run_fetch_license_info
 from lynkscan.cli.init_database import run_init_database
+from lynkscan.cli.interactive_mode import run_interactive_mode
 from lynkscan.cli.register_github_repo import run as run_register_github_repo
 from lynkscan.cli.register_license import run_register_license
 from lynkscan.cli.register_license_categories import (
@@ -12,6 +13,7 @@ from lynkscan.cli.register_software_categories import (
 )
 
 __all__ = [
+    "run_interactive_mode",
     "run_fetch_license_info",
     "run_init_database",
     "run_register_software_categories",
